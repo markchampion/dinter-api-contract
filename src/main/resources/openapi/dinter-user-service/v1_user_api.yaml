@@ -1,0 +1,110 @@
+openapi: "3.0.0"
+info:
+  title: Dinter User Management API
+  version: 0.0.1
+  contact:
+    name: User Management API Support
+tags:
+  - name: Users
+    description: Operations related to User object.
+
+servers:
+  - url: http://{camHost}/v1
+    variables:
+      camHost:
+        default: localhost
+        description: Service host for exposing the service to internal services.
+  - url: https://{camHost}/v1
+    variables:
+      camHost:
+        default: tribune.cam
+        description: Service host for exposing the service to external services.
+
+paths:
+  /users/register:
+    post:
+      summary: POST v1/users/register
+      operationId: register
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UserRequest"
+        required: true
+      responses:
+        201:
+          description: "User registered"
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    description: "User registered successfully"
+  /users/{username}/verify:
+    put:
+      summary: PUT v1/users/{username}/verify
+      operationId: verifyUser
+      parameters:
+        - name: username
+          in: path
+          description: Username of the user to verify
+          required: true
+          schema:
+            type: string
+        - name: otp
+          in: query
+          description: OTP entered by the user
+          required: true
+          schema:
+            type: string
+      responses:
+        200:
+          description: "User verified"
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  token:
+                    type: string
+                    description: "User verified successfully"
+  /users/{username}/resend-otp:
+    get:
+      summary: GET v1/users/register
+      operationId: resendOtp
+      parameters:
+        - name: username
+          in: path
+          description: Username of the user to resend OTP
+          required: true
+          schema:
+            type: string
+      responses:
+        200:
+          description: "OTP resent"
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    description: "OTP resent successfully"
+
+components:
+  schemas:
+    UserRequest:
+      type: object
+      properties:
+        username:
+          type: string
+        password:
+          type: string
+        email:
+          type: string
+          pattern: "^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$"
+        phone:
+          type: string
+          pattern: "^[0-9]{10}$"
