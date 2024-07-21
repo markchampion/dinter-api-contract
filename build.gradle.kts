@@ -31,6 +31,7 @@ specFiles.forEach { specFile ->
 
 tasks.build {
     dependsOn("openApiValidateAll")
+    finalizedBy("publish")
 }
 
 publishing {
@@ -39,9 +40,6 @@ publishing {
             from(components["java"])
         }
     }
-}
-tasks.named("publish") {
-    mustRunAfter("build")
 }
 dependencies {
     testImplementation(platform("org.junit:junit-bom:5.10.0"))
