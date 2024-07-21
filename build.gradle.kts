@@ -4,8 +4,8 @@ import java.util.Locale
 
 plugins {
     id("java")
-    id("org.openapi.generator") version "7.2.0"
     `maven-publish`
+    id("org.openapi.generator") version "7.2.0"
 }
 
 group = "com.dinter"
@@ -38,6 +38,9 @@ publishing {
         create<MavenPublication>("maven") {
             from(components["java"])
         }
+    }
+    tasks.named("publish") {
+        dependsOn("build")
     }
 }
 
