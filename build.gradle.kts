@@ -29,11 +29,6 @@ specFiles.forEach { specFile ->
     tasks.register("openApiValidateAll") { dependsOn(taskName) }
 }
 
-tasks.build {
-    dependsOn("openApiValidateAll")
-    finalizedBy("publish")
-}
-
 publishing {
     publications {
         create<MavenPublication>("maven") {
@@ -41,6 +36,11 @@ publishing {
         }
     }
 }
+
+tasks.build {
+    dependsOn("openApiValidateAll")
+}
+
 dependencies {
     testImplementation(platform("org.junit:junit-bom:5.10.0"))
     testImplementation("org.junit.jupiter:junit-jupiter")
