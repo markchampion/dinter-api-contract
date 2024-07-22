@@ -103,9 +103,5 @@ components:
       properties:
         statusCode:
           type: string
-        message:
-          type: string
         data:
           type: object
-      required:
-        - statusCode
