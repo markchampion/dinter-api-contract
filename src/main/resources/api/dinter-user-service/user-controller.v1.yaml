@@ -119,7 +119,7 @@ components:
         data:
           type: object
     ResponseCode:
-      type: object
+      type: string
       enum:
         - USER_REGISTERED
         - USER_VERIFIED
