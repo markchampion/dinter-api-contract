@@ -5,7 +5,7 @@ info:
   contact:
     name: User Management API Support
 tags:
-  - name: Users
+  - name: User
     description: Operations related to User object.
 servers:
   - url: http://{camHost}/v1
@@ -36,11 +36,7 @@ paths:
           content:
             application/json:
               schema:
-                type: object
-                properties:
-                  message:
-                    type: string
-                    description: User registered successfully
+                $ref: '#/components/schemas/ApiResponse'
   /users/{username}/verify:
     put:
       summary: PUT v1/users/{username}/verify
@@ -64,11 +60,7 @@ paths:
           content:
             application/json:
               schema:
-                type: object
-                properties:
-                  token:
-                    type: string
-                    description: 'User verified successfully'
+                $ref: '#/components/schemas/ApiResponse'
   /users/{username}/resend-otp:
     get:
       summary: GET v1/users/register
@@ -86,11 +78,7 @@ paths:
           content:
             application/json:
               schema:
-                type: object
-                properties:
-                  message:
-                    type: string
-                    description: 'OTP resent successfully'
+                $ref: '#/components/schemas/ApiResponse'
 
 components:
   schemas:
@@ -107,3 +95,16 @@ components:
         phone:
           type: string
           pattern: ^[0-9]{10}$
+      required:
+        - username
+        - password
+    ApiResponse:
+      type: object
+      properties:
+        statusCode:
+          type: string
+        message:
+          type: string
+        data:
+          type: object
+          additionalProperties: true
