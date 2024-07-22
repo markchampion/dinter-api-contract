@@ -107,4 +107,5 @@ components:
           type: string
         data:
           type: object
-          additionalProperties: true
+      required:
+        - statusCode
