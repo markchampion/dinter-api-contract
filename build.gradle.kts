@@ -13,7 +13,6 @@ version = "1.0-SNAPSHOT"
 
 repositories {
     mavenCentral()
-    gradlePluginPortal()
 }
 
 val specFiles = fileTree("$rootDir/src/main/resources/api")
