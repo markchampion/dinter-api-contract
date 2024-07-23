@@ -4,8 +4,8 @@ import java.util.Locale
 
 plugins {
     id("java")
-    id("org.openapi.generator") version "7.2.0"
     `maven-publish`
+    id("org.openapi.generator") version "7.2.0"
 }
 
 group = "com.dinter"
@@ -13,6 +13,7 @@ version = "1.0-SNAPSHOT"
 
 repositories {
     mavenCentral()
+    gradlePluginPortal()
 }
 
 val specFiles = fileTree("$rootDir/src/main/resources/api")
@@ -28,16 +29,16 @@ specFiles.forEach { specFile ->
     tasks.register("openApiValidateAll") { dependsOn(taskName) }
 }
 
-tasks.build {
-    dependsOn("openApiValidateAll")
-}
-
 publishing {
     publications {
         create<MavenPublication>("maven") {
             from(components["java"])
         }
     }
+}
+
+tasks.build {
+    dependsOn("openApiValidateAll")
 }
 
 dependencies {
