@@ -16,6 +16,7 @@ repositories {
     gradlePluginPortal()
 }
 
+val taskNames = mutableListOf<String>()
 val specFiles = fileTree("$rootDir/src/main/resources/api")
     .matching { include("**/*.yaml") }
 
@@ -26,8 +27,9 @@ specFiles.forEach { specFile ->
     tasks.register(taskName, ValidateTask::class) {
         inputSpec.set(specFile.absolutePath)
     }
-    tasks.register("openApiValidateAll") { dependsOn(taskName) }
+    taskNames.add(taskName)
 }
+tasks.register("openApiValidateAll") { dependsOn(taskNames) }
 
 publishing {
     publications {
