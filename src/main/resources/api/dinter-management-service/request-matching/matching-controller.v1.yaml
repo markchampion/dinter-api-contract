@@ -15,6 +15,30 @@ servers:
         description: Service host for exposing the service to internal services.
 
 paths:
+  /matching/{userId}:
+    get:
+      summary: GET v1/matching/{userId}
+      operationId: getMatchingRequests
+      parameters:
+        - name: userId
+          in: path
+          description: User id to get matching requests
+          required: true
+          schema:
+              type: string
+      responses:
+        200:
+          description: Matching requests found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResponse'
+        400:
+          description: 'Matching requests not found'
+          content:
+            application/json:
+              schema:
+                  $ref: '#/components/schemas/ApiResponse'
   /matching/send:
     post:
       summary: POST v1/matching/send
@@ -31,7 +55,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/MatchingRequest'
+                $ref: '#/components/schemas/ApiResponse'
         400:
           description: 'Invalid payload data'
           content:
@@ -93,6 +117,8 @@ components:
     MatchingRequest:
       type: object
       properties:
+        id:
+          type: string
         senderId:
           type: string
         receiverId:
