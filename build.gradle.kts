@@ -18,7 +18,7 @@ repositories {
 
 val taskNames = mutableListOf<String>()
 val specFiles = fileTree("$rootDir/src/main/resources/api")
-    .matching { include("**/*.yaml") }
+    .matching { include("**/**/*.yaml") }
 
 specFiles.forEach { specFile ->
     val taskName = "openApiValidate" + specFile.nameWithoutExtension.replaceFirstChar {
