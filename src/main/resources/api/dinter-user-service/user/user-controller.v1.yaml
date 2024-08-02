@@ -165,7 +165,7 @@ components:
         - password
 
     UserStatus:
-      type: object
+      type: string
       enum:
         - CREATED
         - ACTIVE
