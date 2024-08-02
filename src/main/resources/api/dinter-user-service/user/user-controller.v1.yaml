@@ -15,6 +15,30 @@ servers:
         description: Service host for exposing the service to internal services.
 
 paths:
+  /users/{id}/status:
+    get:
+      summary: GET v1/users/{id}/status
+      operationId: getUserStatus
+      parameters:
+        - name: id
+          in: path
+          description: User id to get user status
+          required: true
+          schema:
+            type: string
+      responses:
+        200:
+          description: User status found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserStatus'
+        400:
+          description: 'User not found'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResponse'
   /users/profile:
     get:
       summary: GET v1/users/profile
@@ -50,7 +74,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/UserRequest'
+              $ref: '#/components/schemas/UserRegisterRequest'
         required: true
       responses:
         201:
@@ -123,7 +147,7 @@ paths:
 
 components:
   schemas:
-    UserRequest:
+    UserRegisterRequest:
       type: object
       properties:
         username:
@@ -139,6 +163,14 @@ components:
       required:
         - username
         - password
+
+    UserStatus:
+      type: object
+      enum:
+        - CREATED
+        - ACTIVE
+        - INACTIVE
+        - DELETED
 
     UserProfile:
       type: object
