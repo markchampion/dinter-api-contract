@@ -1,7 +1,7 @@
 openapi: 3.0.0
 info:
   title: Dinter User Management API
-  version: 0.0.1
+  version: 1.0.0
   contact:
     name: User Management API Support
 tags:
@@ -15,6 +15,57 @@ servers:
         description: Service host for exposing the service to internal services.
 
 paths:
+  /users/{id}/status:
+    get:
+      summary: GET v1/users/{id}/status
+      operationId: getUserStatus
+      parameters:
+        - name: id
+          in: path
+          description: User id to get user status
+          required: true
+          schema:
+            type: string
+      responses:
+        200:
+          description: User status found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserStatus'
+        400:
+          description: 'User not found'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResponse'
+  /users/profile:
+    get:
+      summary: GET v1/users/profile
+      operationId: getUsersProfile
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: array
+              items:
+                type: string
+        required: true
+      responses:
+        200:
+          description: Users found
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/UserProfile'
+        400:
+          description: 'Users profile not found'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResponse'
   /users/register:
     post:
       summary: POST v1/users/register
@@ -23,7 +74,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/UserRequest'
+              $ref: '#/components/schemas/UserRegisterRequest'
         required: true
       responses:
         201:
@@ -93,9 +144,10 @@ paths:
                 schema:
                     $ref: '#/components/schemas/ApiResponse'
 
+
 components:
   schemas:
-    UserRequest:
+    UserRegisterRequest:
       type: object
       properties:
         username:
@@ -111,6 +163,46 @@ components:
       required:
         - username
         - password
+
+    UserStatus:
+      type: string
+      enum:
+        - CREATED
+        - ACTIVE
+        - INACTIVE
+        - DELETED
+
+    UserProfile:
+      type: object
+      properties:
+        avatarImageUrl:
+          type: string
+        displayName:
+          type: string
+          maxLength: 255
+        birthDate:
+          type: string
+          format: date-time
+        gender:
+          type: boolean
+        expectedGender:
+          type: boolean
+        relationshipGoal:
+          type: string
+          maxLength: 255
+        education:
+          type: string
+          maxLength: 255
+        jobTitle:
+          type: string
+          maxLength: 255
+        companyName:
+          type: string
+          maxLength: 255
+        about:
+          type: string
+          maxLength: 1024
+
     ApiResponse:
       type: object
       properties:
@@ -127,4 +219,5 @@ components:
         - USER_NOT_FOUND
         - OTP_MISMATCH
         - USER_ALREADY_EXISTS
+        - USER_PROFILE_NOT_FOUND
 
