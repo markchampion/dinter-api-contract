@@ -38,7 +38,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ApiResponse'
+                $ref: '../schema/shared.yaml#/components/schemas/ApiResponse'
   /users/profile:
     get:
       summary: GET v1/users/profile
@@ -65,7 +65,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ApiResponse'
+                $ref: '../schema/shared.yaml#/components/schemas/ApiResponse'
   /users/register:
     post:
       summary: POST v1/users/register
@@ -82,13 +82,13 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ApiResponse'
+                $ref: '../schema/shared.yaml#/components/schemas/ApiResponse'
         400:
           description: 'User already exists'
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ApiResponse'
+                $ref: '../schema/shared.yaml#/components/schemas/ApiResponse'
   /users/{username}/verify:
     put:
       summary: PUT v1/users/{username}/verify
@@ -112,13 +112,13 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ApiResponse'
+                $ref: '../schema/shared.yaml#/components/schemas/ApiResponse'
         400:
           description: 'User not found or OTP mismatch'
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ApiResponse'
+                $ref: '../schema/shared.yaml#/components/schemas/ApiResponse'
   /users/{username}/resend-otp:
     get:
       summary: GET v1/users{username}/resent-otp
@@ -136,13 +136,13 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ApiResponse'
+                $ref: '../schema/shared.yaml#/components/schemas/ApiResponse'
         400:
           description: 'User not found'
           content:
               application/json:
                 schema:
-                    $ref: '#/components/schemas/ApiResponse'
+                    $ref: '../schema/shared.yaml#/components/schemas/ApiResponse'
 
 
 components:
@@ -203,23 +203,5 @@ components:
           type: string
           maxLength: 1024
 
-    ApiResponse:
-      type: object
-      properties:
-        statusCode:
-          $ref: '#/components/schemas/ResponseCode'
-        data:
-          type: object
-    ResponseCode:
-      type: string
-      enum:
-        - USER_REGISTERED
-        - USER_VERIFIED
-        - OTP_RESENT
-        - USER_NOT_FOUND
-        - OTP_MISMATCH
-        - USER_INACTIVE
-        - USER_ALREADY_EXISTS
-        - USER_PROFILE_NOT_FOUND
-        - UNKNOWN
+
 
