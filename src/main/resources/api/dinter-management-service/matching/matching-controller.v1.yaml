@@ -32,13 +32,13 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ApiResponse'
+                $ref: './schema/shared.yaml#/components/schemas/ApiResponse'
         400:
           description: 'Matching requests not found'
           content:
             application/json:
               schema:
-                  $ref: '#/components/schemas/ApiResponse'
+                $ref: './schema/shared.yaml#/components/schemas/ApiResponse'
   /matching/send:
     post:
       summary: POST v1/matching/send
@@ -55,13 +55,13 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ApiResponse'
+                $ref: './schema/shared.yaml#/components/schemas/ApiResponse'
         400:
           description: 'Invalid payload data'
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ApiResponse'
+                $ref: './schema/shared.yaml#/components/schemas/ApiResponse'
   /matching/{matchingId}/accept:
     put:
       summary: PUT v1/matching/{matchingId}/accept
@@ -79,13 +79,13 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ApiResponse'
+                $ref: './schema/shared.yaml#/components/schemas/ApiResponse'
         400:
           description: 'Matching request not found or has been accepted'
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ApiResponse'
+                $ref: './schema/shared.yaml#/components/schemas/ApiResponse'
   /matching/{matchingId}/reject:
     put:
       summary: PUT v1/matching/{matchingId}/reject
@@ -103,13 +103,13 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ApiResponse'
+                $ref: './schema/shared.yaml#/components/schemas/ApiResponse'
         400:
           description: 'Matching request not found or has been rejected'
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ApiResponse'
+                $ref: './schema/shared.yaml#/components/schemas/ApiResponse'
 
 
 components:
@@ -149,21 +149,4 @@ components:
         - receiverId
         - message
         - requestType
-    ApiResponse:
-      type: object
-      properties:
-        statusCode:
-          $ref: '#/components/schemas/ResponseCode'
-        data:
-          type: object
-    ResponseCode:
-      type: string
-      enum:
-        - SENDER_NOT_FOUND
-        - RECEIVER_NOT_FOUND
-        - MATCH_REQUEST_SENT
-        - MATCH_REQUEST_ACCEPTED
-        - MATCH_REQUEST_REJECTED
-        - MATCH_REQUEST_ALREADY_EXISTS
-        - MATCH_REQUEST_NOT_FOUND
 
