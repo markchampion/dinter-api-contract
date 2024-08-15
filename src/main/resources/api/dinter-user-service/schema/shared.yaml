@@ -19,3 +19,4 @@ components:
         - USER_INACTIVE
         - USER_ALREADY_EXISTS
         - USER_PROFILE_NOT_FOUND
+        - UNKNOWN
