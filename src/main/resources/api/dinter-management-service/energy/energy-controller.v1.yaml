@@ -55,18 +55,13 @@ paths:
           required: true
           schema:
               type: number
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/UserEnergy'
       responses:
         200:
           description: User energy increased
           content:
             application/json:
               schema:
-                $ref: '../schema/shared.yaml#/components/schemas/ApiResponse'
+                $ref: '#/components/schemas/UserEnergy'
         400:
           description: 'Invalid payload data'
           content:
