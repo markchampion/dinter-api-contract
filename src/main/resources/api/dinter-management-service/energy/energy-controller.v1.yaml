@@ -32,7 +32,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '../schema/shared.yaml#/components/schemas/ApiResponse'
+                $ref: '#/components/schemas/UserEnergy'
         400:
           description: 'User energy not found'
           content:
@@ -72,14 +72,27 @@ paths:
 components:
   schemas:
     UserEnergy:
+        type: object
+        properties:
+          userId:
+            type: string
+          amount:
+            type: number
+          timestamp:
+            type: string
+            format: date-time
+        required:
+            - userId
+            - energyType
+            - amount
+            - timestamp
+    UpdateUserEnergy:
       type: object
       properties:
         userId:
           type: string
         amount:
           type: number
-        energyType:
-          $ref: '#/components/schemas/EnergyType'
         requestType:
           $ref: '#/components/schemas/RequestType'
         timestamp:
@@ -98,11 +111,4 @@ components:
       enum:
         - AUTO
         - PURCHASED
-        - UNKNOWN
-    EnergyType:
-      type: string
-      default: UNKNOWN
-      enum:
-        - NORMAL
-        - BOOST
         - UNKNOWN
