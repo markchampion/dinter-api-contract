@@ -49,12 +49,12 @@ paths:
           required: true
           schema:
               type: string
-        - name: energyAmount
-          in: query
-          description: energy amount
-          required: true
-          schema:
-              type: number
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateUserEnergy'
+        required: true
       responses:
         200:
           description: User energy increased
@@ -83,7 +83,6 @@ components:
             format: date-time
         required:
             - userId
-            - energyType
             - amount
             - timestamp
     UpdateUserEnergy:
@@ -93,8 +92,8 @@ components:
           type: string
         amount:
           type: number
-        requestType:
-          $ref: '#/components/schemas/RequestType'
+        changeType:
+          $ref: '#/components/schemas/ChangeType'
         timestamp:
           type: string
           format: date-time
@@ -104,7 +103,7 @@ components:
         - amount
         - requestType
         - timestamp
-    RequestType:
+    ChangeType:
       description: To determine whether this is auto increment energy or purchased energy
       type: string
       default: UNKNOWN
