@@ -1,3 +1,4 @@
+import com.github.davidmc24.gradle.plugin.avro.GenerateAvroJavaTask
 import org.gradle.api.publish.maven.MavenPublication
 import org.openapitools.generator.gradle.plugin.tasks.ValidateTask
 import java.util.Locale
@@ -6,6 +7,7 @@ plugins {
     id("java")
     `maven-publish`
     id("org.openapi.generator") version "7.2.0"
+    id("com.github.davidmc24.gradle.plugin.avro-base") version "1.9.1"
 }
 
 group = "com.dinter"
@@ -34,6 +36,15 @@ specFiles.forEach { specFile ->
 }
 tasks.register("openApiValidateAll") { dependsOn(taskNames) }
 
+val avroFiles = fileTree("$rootDir/src/main/resources/kafka")
+    .matching {
+        include("**/**/*.avsc")
+    }
+tasks.register<GenerateAvroJavaTask>("generateAvro") {
+    source("$rootDir/src/main/resources/kafka")
+    setOutputDir(file("src/main/java"))
+}
+
 publishing {
     publications {
         create<MavenPublication>("maven") {
@@ -47,6 +58,7 @@ tasks.build {
 }
 
 dependencies {
+    implementation ("org.apache.avro:avro:1.11.3")
     testImplementation(platform("org.junit:junit-bom:5.10.0"))
     testImplementation("org.junit.jupiter:junit-jupiter")
 }
