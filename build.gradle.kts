@@ -1,4 +1,5 @@
-import com.github.davidmc24.gradle.plugin.avro.GenerateAvroJavaTask
+import org.apache.avro.Schema
+import org.apache.avro.SchemaParseException
 import org.gradle.api.publish.maven.MavenPublication
 import org.openapitools.generator.gradle.plugin.tasks.ValidateTask
 import java.util.Locale
@@ -40,10 +41,21 @@ val avroFiles = fileTree("$rootDir/src/main/resources/kafka")
     .matching {
         include("**/**/*.avsc")
     }
-tasks.register<GenerateAvroJavaTask>("generateAvro") {
-    source("$rootDir/src/main/resources/kafka")
-    setOutputDir(file("src/main/java"))
+
+tasks.register("validateAvroSchemas") {
+    doLast {
+        avroFiles.forEach { file ->
+            try {
+                Schema.Parser().parse(file)
+                println("Schema ${file.name} is valid.")
+            } catch (e: SchemaParseException) {
+                println("Schema ${file.name} is invalid: ${e.message}")
+                throw e
+            }
+        }
+    }
 }
+
 
 publishing {
     publications {
@@ -59,6 +71,7 @@ tasks.build {
 
 dependencies {
     implementation ("org.apache.avro:avro:1.11.3")
+    implementation("org.apache.avro:avro-tools:1.11.3")
     testImplementation(platform("org.junit:junit-bom:5.10.0"))
     testImplementation("org.junit.jupiter:junit-jupiter")
 }
