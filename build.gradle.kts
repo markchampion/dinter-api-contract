@@ -8,10 +8,11 @@ plugins {
     id("java")
     `maven-publish`
     id("org.openapi.generator") version "7.2.0"
+    id("com.jfrog.artifactory") version "5.+"
     id("com.github.davidmc24.gradle.plugin.avro-base") version "1.9.1"
 }
 
-group = "com.dinter"
+group = "com.dinter.contract"
 version = "1.0-SNAPSHOT"
 
 repositories {
@@ -56,11 +57,35 @@ tasks.register("validateAvroSchemas") {
     }
 }
 
-
-publishing {
+configure<PublishingExtension> {
     publications {
-        create<MavenPublication>("maven") {
-            from(components["java"])
+        register<MavenPublication>("mavenJava") {
+            from(components.getByName("java"))
+            artifact(file("$rootDir/gradle.properties"))
+        }
+    }
+}
+configure<org.jfrog.gradle.plugin.artifactory.dsl.ArtifactoryPluginConvention> {
+    clientConfig.isIncludeEnvVars = true
+
+    setContextUrl(providers.gradleProperty("context_url").getOrNull())
+    publish {
+        repository {
+            repoKey = providers.gradleProperty("repo_key").getOrNull()
+            username = providers.gradleProperty("artifactory_user").getOrNull()
+            password = providers.gradleProperty("artifactory_password").getOrNull()
+        }
+
+        defaults {
+            publications("mavenJava")
+            setPublishArtifacts(true)
+            // Properties to be attached to the published artifacts.
+            setProperties(mapOf(
+                "qa.level" to "basic",
+                "dev.team" to "core"
+            ))
+            setPublishPom(true) // Publish generated POM files to Artifactory (true by default)
+            setPublishIvy(true) // Publish generated Ivy descriptor files to Artifactory (true by default)
         }
     }
 }
