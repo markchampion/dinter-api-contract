@@ -20,9 +20,3 @@ jobs:
 
       - name: Build with Gradle
         run: ./gradlew build
-
-      - name: Upload artifact
-        uses: actions/upload-artifact@v2
-        with:
-          name: dinter-api-contract
-          path: build/libs/*.jar
