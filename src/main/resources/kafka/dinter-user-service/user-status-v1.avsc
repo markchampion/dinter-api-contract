@@ -1,0 +1,6 @@
+{
+  "namespace": "com.dinter.kafka.user.model",
+  "type": "enum",
+  "name": "UserStatus",
+  "symbols": ["CREATED", "ACTIVE", "INACTIVE", "DELETED"]
+}

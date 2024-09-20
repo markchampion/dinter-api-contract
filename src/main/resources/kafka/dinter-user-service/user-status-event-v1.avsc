@@ -1,31 +1,29 @@
 {
   "namespace": "com.dinter.kafka.user.model",
   "type": "record",
-  "name": "UserCreatedEvent",
+  "name": "UserStatusEvent",
   "fields": [
     {
       "name": "userId",
-      "type": "long"
+      "type": {
+        "type": "string",
+        "logicalType": "uuid"
+      }
     },
     {
-      "name": "id",
-      "type": "long"
+      "name": "username",
+      "type": "string"
     },
     {
-      "name": "text",
-      "type": [
-        "null",
-        "string"
-      ]
+      "name": "status",
+        "type": "UserStatus"
     },
     {
       "name": "createdAt",
       "type": [
-        "null",
         "long"
       ],
       "logicalType": [
-        "null",
         "date"
       ]
     }

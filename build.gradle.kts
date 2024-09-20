@@ -95,8 +95,6 @@ tasks.build {
 }
 
 dependencies {
-    implementation ("org.apache.avro:avro:1.11.3")
-    implementation("org.apache.avro:avro-tools:1.11.3")
     testImplementation(platform("org.junit:junit-bom:5.10.0"))
     testImplementation("org.junit.jupiter:junit-jupiter")
 }
