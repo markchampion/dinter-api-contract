@@ -39,33 +39,6 @@ paths:
             application/json:
               schema:
                 $ref: '../schema/shared.yaml#/components/schemas/ApiResponse'
-  /users/profile:
-    get:
-      summary: GET v1/users/profile
-      operationId: getUsersProfile
-      requestBody:
-        content:
-          application/json:
-            schema:
-              type: array
-              items:
-                type: string
-        required: true
-      responses:
-        200:
-          description: Users found
-          content:
-            application/json:
-              schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/UserProfile'
-        400:
-          description: 'Users profile not found'
-          content:
-            application/json:
-              schema:
-                $ref: '../schema/shared.yaml#/components/schemas/ApiResponse'
   /users/register:
     post:
       summary: POST v1/users/register
