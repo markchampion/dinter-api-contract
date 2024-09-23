@@ -42,6 +42,28 @@ paths:
             application/json:
               schema:
                 $ref: '../schema/shared.yaml#/components/schemas/ApiResponse'
+    post:
+        summary: POST v1/users/profile
+        operationId: createUserProfile
+        requestBody:
+            content:
+              application/json:
+                  schema:
+                    $ref: '#/components/schemas/UserProfile'
+            required: true
+        responses:
+            201:
+              description: User profile created
+              content:
+                  application/json:
+                    schema:
+                        $ref: '#/components/schemas/UserProfile'
+            400:
+              description: 'User profile not found'
+              content:
+                  application/json:
+                    schema:
+                        $ref: '../schema/shared.yaml#/components/schemas/ApiResponse'
   /profiles/{userId}:
     get:
         summary: GET v1/users/profile/{userId}
@@ -49,7 +71,7 @@ paths:
         parameters:
             - name: userId
               in: path
-              description: User id to get user profile
+              description: Profile id to get user profile
               required: true
               schema:
                   type: string
@@ -72,7 +94,7 @@ paths:
       parameters:
         - name: userId
           in: path
-          description: User id to get user profile
+          description: Profile id to update user profile
           required: true
           schema:
             type: string
@@ -95,33 +117,46 @@ paths:
             application/json:
               schema:
                 $ref: '../schema/shared.yaml#/components/schemas/ApiResponse'
+  /profiles/preferences:
+    post:
+        summary: POST v1/users/preferences
+        operationId: createUserPreference
+        requestBody:
+            content:
+              application/json:
+                  schema:
+                    $ref: '#/components/schemas/UserPreference'
+            required: true
+        responses:
+            201:
+              description: User preferences created
+              content:
+                  application/json:
+                    schema:
+                        $ref: '#/components/schemas/UserPreference'
+            400:
+              description: 'User preferences not found'
+              content:
+                  application/json:
+                    schema:
+                        $ref: '../schema/shared.yaml#/components/schemas/ApiResponse'
   /profiles/preferences/{userId}:
     get:
       summary: GET v1/users/preferences
-      operationId: getUsersPreferences
+      operationId: getUsersPreference
       parameters:
         - name: userId
           in: path
-          description: User id to get user profile
+          description: User preference id to get user preference
           required: true
           schema:
             type: string
-      requestBody:
-        content:
-          application/json:
-            schema:
-              type: array
-              items:
-                type: string
-        required: true
       responses:
         200:
           description: Users preferences found
           content:
             application/json:
               schema:
-                type: array
-                items:
                   $ref: '#/components/schemas/UserPreference'
         400:
           description: 'Users preferences not found'
@@ -135,7 +170,7 @@ paths:
         parameters:
           - name: userId
             in: path
-            description: User id to get user profile
+            description: User preference id to get user preference
             required: true
             schema:
               type: string
@@ -164,8 +199,12 @@ components:
     UserProfile:
       type: object
       properties:
+        id:
+          type: string
         userId:
           type: string
+        userPreference:
+          $ref: '#/components/schemas/UserPreference'
         avatarImageUrl:
           type: string
         displayName:
@@ -188,9 +227,18 @@ components:
         about:
           type: string
           maxLength: 1024
+      required:
+        - userId
+        - avatarImageUrl
+        - displayName
+        - birthDate
+        - gender
+        
     UserPreference:
         type: object
         properties:
+          id:
+            type: string
           userId:
             type: string
           gender:
@@ -209,6 +257,13 @@ components:
           updatedDate:
             type: string
             format: date-time
+        required:
+          - id
+          - userId
+          - gender
+          - distance
+          - ageFrom
+          - ageFrom
 
 
 
