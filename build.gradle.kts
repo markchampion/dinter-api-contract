@@ -25,6 +25,7 @@ val specFiles = fileTree("$rootDir/src/main/resources/api")
     .matching {
         include("**/**/*.yaml")
         exclude("**/schema/*.yaml")
+        exclude("**/**/common/*.yaml")
     }
 
 specFiles.forEach { specFile ->

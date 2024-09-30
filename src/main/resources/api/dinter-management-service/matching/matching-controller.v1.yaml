@@ -32,13 +32,14 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '../schema/shared.yaml#/components/schemas/ApiResponse'
+                items:
+                  $ref: '#/components/schemas/MatchingRequest'
         400:
           description: 'Matching requests not found'
           content:
             application/json:
               schema:
-                $ref: '../schema/shared.yaml#/components/schemas/ApiResponse'
+                $ref: '../../common/error.yaml#/components/schemas/ErrorResponse'
   /matching/send:
     post:
       summary: POST v1/matching/send
@@ -50,18 +51,14 @@ paths:
               $ref: '#/components/schemas/MatchingRequest'
         required: true
       responses:
-        200:
+        204:
           description: Match request sent
-          content:
-            application/json:
-              schema:
-                $ref: '../schema/shared.yaml#/components/schemas/ApiResponse'
         400:
           description: 'Invalid payload data'
           content:
             application/json:
               schema:
-                $ref: '../schema/shared.yaml#/components/schemas/ApiResponse'
+                $ref: '../../common/error.yaml#/components/schemas/ErrorResponse'
   /matching/{matchingId}/accept:
     put:
       summary: PUT v1/matching/{matchingId}/accept
@@ -74,18 +71,14 @@ paths:
           schema:
             type: string
       responses:
-        200:
+        204:
           description: Match request accepted
-          content:
-            application/json:
-              schema:
-                $ref: '../schema/shared.yaml#/components/schemas/ApiResponse'
         400:
-          description: 'Matching request not found or has been accepted'
+          description: Matching request not found or has been accepted
           content:
             application/json:
               schema:
-                $ref: '../schema/shared.yaml#/components/schemas/ApiResponse'
+                $ref: '../../common/error.yaml#/components/schemas/ErrorResponse'
   /matching/{matchingId}/reject:
     put:
       summary: PUT v1/matching/{matchingId}/reject
@@ -98,18 +91,14 @@ paths:
           schema:
             type: string
       responses:
-        200:
+        204:
           description: Match request rejected
-          content:
-            application/json:
-              schema:
-                $ref: '../schema/shared.yaml#/components/schemas/ApiResponse'
         400:
-          description: 'Matching request not found or has been rejected'
+          description: Matching request not found or has been rejected
           content:
             application/json:
               schema:
-                $ref: '../schema/shared.yaml#/components/schemas/ApiResponse'
+                $ref: '../../common/error.yaml#/components/schemas/ErrorResponse'
 
 
 components:

@@ -38,7 +38,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '../schema/shared.yaml#/components/schemas/ApiResponse'
+                $ref: '../../common/error.yaml#/components/schemas/ErrorResponse'
   /users/register:
     post:
       summary: POST v1/users/register
@@ -55,13 +55,13 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '../schema/shared.yaml#/components/schemas/ApiResponse'
+                $ref: '#/components/schemas/User'
         400:
           description: 'User already exists'
           content:
             application/json:
               schema:
-                $ref: '../schema/shared.yaml#/components/schemas/ApiResponse'
+                $ref: '../../common/error.yaml#/components/schemas/ErrorResponse'
   /users/{username}/verify:
     put:
       summary: PUT v1/users/{username}/verify
@@ -85,13 +85,13 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '../schema/shared.yaml#/components/schemas/ApiResponse'
+                $ref: '#/components/schemas/User'
         400:
           description: 'User not found or OTP mismatch'
           content:
             application/json:
               schema:
-                $ref: '../schema/shared.yaml#/components/schemas/ApiResponse'
+                $ref: '../../common/error.yaml#/components/schemas/ErrorResponse'
   /users/{username}/resend-otp:
     get:
       summary: GET v1/users{username}/resent-otp
@@ -104,22 +104,33 @@ paths:
           schema:
             type: string
       responses:
-        200:
+        204:
           description: 'OTP resent'
-          content:
-            application/json:
-              schema:
-                $ref: '../schema/shared.yaml#/components/schemas/ApiResponse'
         400:
           description: 'User not found'
           content:
               application/json:
                 schema:
-                    $ref: '../schema/shared.yaml#/components/schemas/ApiResponse'
+                    $ref: '../../common/error.yaml#/components/schemas/ErrorResponse'
 
 
 components:
   schemas:
+    User:
+      type: object
+      properties:
+        id:
+          type: string
+        username:
+          type: string
+        email:
+          type: string
+          pattern: ^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$
+        phone:
+          type: string
+          pattern: ^[0-9]{10}$
+        status:
+          $ref: '#/components/schemas/UserStatus'
     UserRegisterRequest:
       type: object
       properties:

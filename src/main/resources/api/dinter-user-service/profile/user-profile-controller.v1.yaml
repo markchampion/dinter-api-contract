@@ -41,7 +41,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '../schema/shared.yaml#/components/schemas/ApiResponse'
+                $ref: '../../common/error.yaml#/components/schemas/ErrorResponse'
     post:
         summary: POST v1/users/profile
         operationId: createUserProfile
@@ -63,7 +63,7 @@ paths:
               content:
                   application/json:
                     schema:
-                        $ref: '../schema/shared.yaml#/components/schemas/ApiResponse'
+                      $ref: '../../common/error.yaml#/components/schemas/ErrorResponse'
   /profiles/{userId}:
     get:
         summary: GET v1/users/profile/{userId}
@@ -87,7 +87,7 @@ paths:
               content:
                   application/json:
                     schema:
-                        $ref: '../schema/shared.yaml#/components/schemas/ApiResponse'
+                        $ref: '../../common/error.yaml#/components/schemas/ErrorResponse'
     put:
       summary: PUT v1/users/profile
       operationId: updateUserProfile
@@ -116,7 +116,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '../schema/shared.yaml#/components/schemas/ApiResponse'
+                $ref: '../../common/error.yaml#/components/schemas/ErrorResponse'
   /profiles/preferences:
     post:
         summary: POST v1/users/preferences
@@ -139,7 +139,7 @@ paths:
               content:
                   application/json:
                     schema:
-                        $ref: '../schema/shared.yaml#/components/schemas/ApiResponse'
+                        $ref: '../../common/error.yaml#/components/schemas/ErrorResponse'
   /profiles/preferences/{userId}:
     get:
       summary: GET v1/users/preferences
@@ -163,7 +163,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '../schema/shared.yaml#/components/schemas/ApiResponse'
+                $ref: '../../common/error.yaml#/components/schemas/ErrorResponse'
     put:
         summary: PUT v1/users/preferences
         operationId: updateUserPreferences
@@ -188,11 +188,11 @@ paths:
                     schema:
                         $ref: '#/components/schemas/UserPreference'
             400:
-              description: 'User preferences not found'
+              description: 'User bad request'
               content:
                   application/json:
                     schema:
-                        $ref: '../schema/shared.yaml#/components/schemas/ApiResponse'
+                        $ref: '../../common/error.yaml#/components/schemas/ErrorResponse'
 
 components:
   schemas:

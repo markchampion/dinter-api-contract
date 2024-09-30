@@ -38,7 +38,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '../schema/shared.yaml#/components/schemas/ApiResponse'
+                $ref: '../../common/error.yaml#/components/schemas/ErrorResponse'
     put:
       summary: PUT v1/energy/{userId}
       operationId: updateUserEnergy
@@ -67,7 +67,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '../schema/shared.yaml#/components/schemas/ApiResponse'
+                $ref: '../../common/error.yaml#/components/schemas/ErrorResponse'
 
 components:
   schemas:
