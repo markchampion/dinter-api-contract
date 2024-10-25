@@ -53,7 +53,7 @@ paths:
             required: true
         responses:
             201:
-              description: User profile created
+              description: User profile creat ed
               content:
                   application/json:
                     schema:
@@ -64,6 +64,28 @@ paths:
                   application/json:
                     schema:
                       $ref: '../../common/error.yaml#/components/schemas/ErrorResponse'
+    put:
+      summary: PUT v1/users/profile
+      operationId: updateUserProfile
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UserProfile'
+        required: true
+      responses:
+        200:
+          description: User profile updated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserProfile'
+        400:
+          description: 'User profile not found'
+          content:
+            application/json:
+              schema:
+                $ref: '../../common/error.yaml#/components/schemas/ErrorResponse'
   /profiles/{userId}:
     get:
         summary: GET v1/users/profile/{userId}
@@ -88,35 +110,7 @@ paths:
                   application/json:
                     schema:
                         $ref: '../../common/error.yaml#/components/schemas/ErrorResponse'
-    put:
-      summary: PUT v1/users/profile
-      operationId: updateUserProfile
-      parameters:
-        - name: userId
-          in: path
-          description: Profile id to update user profile
-          required: true
-          schema:
-            type: string
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/UserProfile'
-        required: true
-      responses:
-        200:
-          description: User profile updated
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/UserProfile'
-        400:
-          description: 'User profile not found'
-          content:
-            application/json:
-              schema:
-                $ref: '../../common/error.yaml#/components/schemas/ErrorResponse'
+
   /profiles/preferences:
     post:
         summary: POST v1/users/preferences
@@ -140,6 +134,28 @@ paths:
                   application/json:
                     schema:
                         $ref: '../../common/error.yaml#/components/schemas/ErrorResponse'
+    put:
+      summary: PUT v1/users/preferences
+      operationId: updateUserPreferences
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UserPreference'
+        required: true
+      responses:
+        200:
+          description: User preferences updated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserPreference'
+        400:
+          description: 'User bad request'
+          content:
+            application/json:
+              schema:
+                $ref: '../../common/error.yaml#/components/schemas/ErrorResponse'
   /profiles/preferences/{userId}:
     get:
       summary: GET v1/users/preferences
@@ -164,35 +180,7 @@ paths:
             application/json:
               schema:
                 $ref: '../../common/error.yaml#/components/schemas/ErrorResponse'
-    put:
-        summary: PUT v1/users/preferences
-        operationId: updateUserPreferences
-        parameters:
-          - name: userId
-            in: path
-            description: User preference id to get user preference
-            required: true
-            schema:
-              type: string
-        requestBody:
-            content:
-              application/json:
-                  schema:
-                    $ref: '#/components/schemas/UserPreference'
-            required: true
-        responses:
-            200:
-              description: User preferences updated
-              content:
-                  application/json:
-                    schema:
-                        $ref: '#/components/schemas/UserPreference'
-            400:
-              description: 'User bad request'
-              content:
-                  application/json:
-                    schema:
-                        $ref: '../../common/error.yaml#/components/schemas/ErrorResponse'
+
 
 components:
   schemas:
