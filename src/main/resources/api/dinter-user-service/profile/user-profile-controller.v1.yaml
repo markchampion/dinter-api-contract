@@ -97,6 +97,7 @@ paths:
               required: true
               schema:
                   type: string
+                  format: uuid
         responses:
             200:
               description: User profile found
@@ -167,6 +168,7 @@ paths:
           required: true
           schema:
             type: string
+            format: uuid
       responses:
         200:
           description: Users preferences found
@@ -191,6 +193,7 @@ components:
           type: string
         userId:
           type: string
+          format: uuid
         userPreference:
           $ref: '#/components/schemas/UserPreference'
         avatarImageUrl:
@@ -229,16 +232,21 @@ components:
             type: string
           userId:
             type: string
+            format: uuid
           gender:
             type: boolean
           distance:
             type: integer
+            minimum: 1
+            maximum: 200
           ageFrom:
             type: integer
             minimum:  18
             maximum: 100
           ageTo:
             type: integer
+            minimum: 18
+            maximum: 100
           createdDate:
             type: string
             format: date-time
@@ -246,7 +254,6 @@ components:
             type: string
             format: date-time
         required:
-          - id
           - userId
           - gender
           - distance

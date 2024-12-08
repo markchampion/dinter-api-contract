@@ -26,6 +26,7 @@ paths:
           required: true
           schema:
               type: string
+              format: uuid
       responses:
         200:
           description: User energy found
@@ -49,6 +50,7 @@ paths:
           required: true
           schema:
               type: string
+              format: uuid
       requestBody:
         content:
           application/json:
@@ -76,6 +78,7 @@ components:
         properties:
           userId:
             type: string
+            format: uuid
           amount:
             type: number
           timestamp:
@@ -90,6 +93,7 @@ components:
       properties:
         userId:
           type: string
+          format: uuid
         amount:
           type: number
         changeType:
