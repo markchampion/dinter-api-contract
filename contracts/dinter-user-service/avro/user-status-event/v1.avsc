@@ -1,0 +1,36 @@
+{
+  "x-dinter-metadata": {
+    "version": "1.0.0",
+    "type": "EVENT",
+    "topic": "dinter-user-service.user-status-event.v1"
+  },
+  "namespace": "com.dinter.dinteruserservice.avro.contract.userstatusevent.v1",
+  "type": "record",
+  "name": "UserStatusEvent",
+  "fields": [
+    {
+      "name": "userId",
+      "type": {
+        "type": "string",
+        "logicalType": "uuid"
+      }
+    },
+    {
+      "name": "username",
+      "type": "string"
+    },
+    {
+      "name": "status",
+      "type": {
+        "type": "enum",
+        "name": "UserStatus",
+        "symbols": ["CREATED", "ACTIVE", "INACTIVE", "DELETED"]
+      }
+    },
+    {
+      "name": "createdAt",
+      "type": "long",
+      "logicalType": "timestamp-millis"
+    }
+  ]
+}

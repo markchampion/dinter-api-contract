@@ -1,0 +1,17 @@
+{
+   "x-dinter-metadata": {
+        "version": "1.2.0",
+        "type": "EVENT",
+        "topic": "microservice-template.account-changed.v1"
+   },
+  "name": "AccountChangeEventAvro",
+  "type": "record",
+  "namespace": "com.dinter.microservicetemplate.avro.contract.accountchanged.v1",
+  "aliases": [],
+  "fields": [
+    { "name" : "eventId" , "type" : "string" },
+    { "name" : "timestamp" , "type" : "long" },
+    { "name" : "accountId" , "type" : "string" },
+    { "name" : "accountChangeOperationType" , "type" : "string" }
+  ]
+}

@@ -1,0 +1,28 @@
+openapi: 3.0.0
+info:
+  title: Dinter User Management API
+  version: 1.0.0
+  contact:
+    name: User Management API Support
+components:
+  schemas:
+    ApiResponse:
+      type: object
+      properties:
+        statusCode:
+          $ref: '#/components/schemas/ResponseCode'
+        data:
+          type: object
+    ResponseCode:
+      type: string
+      default: UNKNOWN
+      enum:
+        - USER_REGISTERED
+        - USER_VERIFIED
+        - OTP_RESENT
+        - USER_NOT_FOUND
+        - OTP_MISMATCH
+        - USER_INACTIVE
+        - USER_ALREADY_EXISTS
+        - USER_PROFILE_NOT_FOUND
+        - UNKNOWN
