@@ -1,0 +1,78 @@
+openapi: 3.0.0
+info:
+  title: Location API
+  version: 1.0.0
+  contact:
+    name: User Management API Support
+tags:
+  - name: Location
+    description: Operations related to User object.
+
+paths:
+  /locations/me:
+    get:
+      tags:
+        - Location
+      operationId: updateLocation
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                latitude:
+                  type: number
+                  format: double
+                longitude:
+                  type: number
+                  format: double
+        required: true
+      responses:
+        201:
+          description: Location updated successfully
+        400:
+          description: 'Invalid request'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResponse'
+
+components:
+  schemas:
+    RecommendationProfile:
+      type: object
+      properties:
+        userId:
+          type: string
+        vibes:
+          type: array
+          items:
+            type: string
+        displayName:
+          type: string
+        gender:
+          type: integer
+        previewImages:
+          type: array
+          items:
+            type: string
+        jobTitle:
+          type: string
+        about:
+          type: string
+        distance:
+          type: number
+
+    ApiResponse:
+      type: object
+      properties:
+        statusCode:
+          $ref: '#/components/schemas/ResponseCode'
+        data:
+          type: object
+    ResponseCode:
+      type: string
+      default: UNKNOWN
+      enum:
+        - INVALID_REQUEST
+

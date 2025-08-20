@@ -10,7 +10,6 @@ open class CustomizePublishingTask  : ContractTask<Contract>() {
 
     @TaskAction
     fun action() {
-
         project.plugins.apply(PublishingPlugin::class.java)
         project.extensions.configure(PublishingExtension::class.java) {
             it.publications { pc ->
@@ -21,7 +20,7 @@ open class CustomizePublishingTask  : ContractTask<Contract>() {
                         MavenPublication::class.java
                     ) { mp ->
                         mp.groupId = "com.dinter.contracts.${contract.type.name.lowercase()}.${contract.context}"
-                        mp.artifactId = "${contract.name}-v${contract.majorVersion}"
+                        mp.artifactId = contract.name
                         mp.version = contractVersion(contract.majorVersion, contractInstance.semver.toString())
                         mp.artifact(contract.file)
                     }

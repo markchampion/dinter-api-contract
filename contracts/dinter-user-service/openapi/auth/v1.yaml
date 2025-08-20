@@ -1,0 +1,68 @@
+openapi: 3.0.3
+info:
+  title: Dinter Auth API
+  version: 1.0.0
+  contact:
+    name: Auth API Support
+tags:
+  - name: Auth
+    description: Operations related to User object.
+
+paths:
+  /v1/auth/login:
+    post:
+      tags:
+        - Auth
+      summary: POST v1/auth/login
+      operationId: loginUser
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/LoginRequest'
+      responses:
+        200:
+          description: User logged in successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/LoginResponse'
+        400:
+          description: 'Invalid credentials'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResponse'
+
+components:
+    schemas:
+        LoginRequest:
+          type: object
+          properties:
+              username:
+                type: string
+                description: Username of the user
+              password:
+                type: string
+                description: Password of the user
+          required:
+              - username
+              - password
+
+        LoginResponse:
+          type: object
+          properties:
+              token:
+                type: string
+                description: JWT token for authenticated user
+              userId:
+                type: string
+                description: ID of the authenticated user
+
+        ApiResponse:
+          type: object
+          properties:
+              message:
+                type: string
+                description: Error message if any

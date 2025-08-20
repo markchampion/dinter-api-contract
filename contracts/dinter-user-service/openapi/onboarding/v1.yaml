@@ -1,0 +1,154 @@
+openapi: 3.0.3
+info: { title: Onboarding API, version: 1.0.0 }
+paths:
+  /v1/onboarding/status:
+    get:
+      summary: Get current user's onboarding status
+      operationId: getOnboardingStatus
+      tags:
+        - Onboarding
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/OnboardingStatus'
+              examples:
+                pending:
+                  value:
+                    requiresOnboarding: true
+                    requiredSteps: [ "BASICS","PHOTOS","VIBES","INTENT" ]
+                    completedSteps: [ "BASICS" ]
+                    nextStep: "PHOTOS"
+
+  /v1/onboarding/basics:
+    patch:
+      summary: Upsert basic profile fields
+      tags:
+        - Onboarding
+      operationId: patchOnboardingBasics
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/OnboardingBasicsRequest' }
+      responses:
+        "200": { description: OK, content: { application/json: { schema: { $ref: '#/components/schemas/OnboardingStatus' } } } }
+        "400": { description: Validation error }
+
+  /v1/onboarding/photos:
+    patch:
+      summary: Set avatar and/or gallery photos
+      tags:
+        - Onboarding
+      operationId: patchOnboardingPhotos
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/OnboardingPhotosRequest' }
+      responses:
+        "200": { description: OK, content: { application/json: { schema: { $ref: '#/components/schemas/OnboardingStatus' } } } }
+
+  /v1/onboarding/vibes:
+    patch:
+      summary: Set vibe tags
+      operationId: patchOnboardingVibes
+      tags:
+        - Onboarding
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/OnboardingVibesRequest' }
+      responses:
+        "200": { description: OK, content: { application/json: { schema: { $ref: '#/components/schemas/OnboardingStatus' } } } }
+
+  /v1/onboarding/intent:
+    patch:
+      summary: Set relationship intent
+      tags:
+        - Onboarding
+      operationId: patchOnboardingIntent
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/OnboardingIntentRequest' }
+      responses:
+        "200": { description: OK, content: { application/json: { schema: { $ref: '#/components/schemas/OnboardingStatus' } } } }
+
+  /v1/onboarding/complete:
+    post:
+      summary: Mark onboarding as complete if all required steps done
+      tags:
+        - Onboarding
+      operationId: completeOnboarding
+      responses:
+        "200":
+          description: Completed
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/OnboardingStatus' }
+        "409":
+          description: Missing required steps
+
+components:
+  schemas:
+    OnboardingStatus:
+      type: object
+      properties:
+        requiresOnboarding: { type: boolean }
+        requiredSteps:
+          type: array
+          items: { $ref: '#/components/schemas/OnboardingStep' }
+        completedSteps:
+          type: array
+          items: { $ref: '#/components/schemas/OnboardingStep' }
+        nextStep:
+          $ref: '#/components/schemas/OnboardingStep'
+    OnboardingStep:
+      type: string
+      enum: [ BASICS, PHOTOS, VIBES, INTENT, SPOTIFY ]
+
+    OnboardingBasicsRequest:
+      type: object
+      additionalProperties: false
+      properties:
+        displayName: { type: string, minLength: 1, maxLength: 50 }
+        birthDate: { type: string, format: date }
+        about: { type: string, maxLength: 1024 }
+        education: { type: string, maxLength: 255 }
+        jobTitle: { type: string, maxLength: 255 }
+        companyName: { type: string, maxLength: 255 }
+      required: [ displayName, birthDate ]
+
+    OnboardingPhotosRequest:
+      type: object
+      additionalProperties: false
+      properties:
+        avatarImageId: { type: integer }         # FK to user_images.id
+        galleryImageIds:
+          type: array
+          items: { type: integer }
+      required: [ avatarImageId ]
+
+    OnboardingVibesRequest:
+      type: object
+      additionalProperties: false
+      properties:
+        tagIds:
+          type: array
+          items: { type: integer }
+          minItems: 1
+          maxItems: 5
+
+    OnboardingIntentRequest:
+      type: object
+      additionalProperties: false
+      properties:
+        intent:
+          type: string
+          enum: [ DATING, FRIENDS, VIBING ]
+      required: [ intent ]

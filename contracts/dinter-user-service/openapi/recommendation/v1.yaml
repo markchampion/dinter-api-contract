@@ -1,0 +1,83 @@
+openapi: 3.0.0
+info:
+  title: Dinter User Management API
+  version: 1.0.0
+  contact:
+    name: User Management API Support
+tags:
+  - name: Recommendation
+    description: Operations related to User object.
+
+paths:
+  /recommendtaions:
+    get:
+      tags:
+        - Recommendation
+      summary: GET v1/users/{id}/status
+      operationId: getRecommendations
+      parameters:
+        - name: limit
+          in: path
+          description: Limit the number of recommendations returned
+          required: true
+          schema:
+            type: integer
+        - name: offset
+          in: path
+          description: Limit the number of recommendations returned
+          required: true
+          schema:
+            type: integer
+      responses:
+        200:
+          description: Recommendations found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RecommendationProfile'
+        400:
+          description: 'User not found'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResponse'
+
+components:
+  schemas:
+    RecommendationProfile:
+      type: object
+      properties:
+        userId:
+          type: string
+        vibes:
+          type: array
+          items:
+            type: string
+        displayName:
+          type: string
+        gender:
+          type: integer
+        previewImages:
+          type: array
+          items:
+            type: string
+        jobTitle:
+          type: string
+        about:
+          type: string
+        distance:
+          type: number
+
+    ApiResponse:
+      type: object
+      properties:
+        statusCode:
+          $ref: '#/components/schemas/ResponseCode'
+        data:
+          type: object
+    ResponseCode:
+      type: string
+      default: UNKNOWN
+      enum:
+        - USER_REGISTERED
+

@@ -1,0 +1,63 @@
+openapi: 3.0.0
+info:
+  title: Dinter User Management API
+  version: 1.0.0
+  contact:
+    name: User Management API Support
+tags:
+  - name: Recommendation
+    description: Operations related to User object.
+
+paths:
+  /v1/settings:
+    get:
+      summary: Get current user's settings
+      responses:
+        "200":
+          description: OK
+    patch:
+      summary: Partially update settings (JSON Merge Patch)
+      responses:
+        "200": { description: OK }
+        "400": { description: Validation error }
+
+
+components:
+  schemas:
+    RecommendationProfile:
+      type: object
+      properties:
+        userId:
+          type: string
+        vibes:
+          type: array
+          items:
+            type: string
+        displayName:
+          type: string
+        gender:
+          type: integer
+        previewImages:
+          type: array
+          items:
+            type: string
+        jobTitle:
+          type: string
+        about:
+          type: string
+        distance:
+          type: number
+
+    ApiResponse:
+      type: object
+      properties:
+        statusCode:
+          $ref: '#/components/schemas/ResponseCode'
+        data:
+          type: object
+    ResponseCode:
+      type: string
+      default: UNKNOWN
+      enum:
+        - USER_REGISTERED
+
