@@ -9,7 +9,7 @@ tags:
     description: Operations related to User object.
 
 paths:
-  /v1/recommendtaions:
+  /v1/recommendations:
     get:
       tags:
         - Recommendation
