@@ -1,116 +1,211 @@
-openapi: 3.0.0
+openapi: 3.0.3
 info:
-  title: Dinter User Management API
+  title: Dinter Recommendations API
   version: 1.0.0
   contact:
-    name: User Management API Support
+    name: API Support
 tags:
   - name: Recommendation
-    description: Operations related to User object.
+    description: Endpoints for fetching recommendations and recording swipes.
+
+servers:
+  - url: https://api.dinter.example.com
+    description: Production
+  - url: http://localhost:8080
+    description: Local
+
+security:
+  - bearerAuth: []
 
 paths:
   /v1/recommendations:
     get:
       tags:
         - Recommendation
-      summary: GET v1/users/{id}/status
+      summary: Get ranked recommendation cards
       operationId: getRecommendations
       parameters:
         - name: limit
-          in: path
-          description: Limit the number of recommendations returned
-          required: true
+          in: query
+          description: Number of recommendations to return (default 5, max 20)
+          required: false
           schema:
             type: integer
-        - name: offset
-          in: path
-          description: Limit the number of recommendations returned
-          required: true
+            minimum: 1
+            maximum: 20
+            default: 5
+        - name: seed
+          in: query
+          description: Optional RNG seed for reproducible ordering/tie-breaks
+          required: false
           schema:
             type: integer
+            format: int64
       responses:
-        200:
-          description: Recommendations found
+        '200':
+          description: Ordered list of recommendation cards
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/RecommendationProfile'
-        400:
-          description: 'User not found'
+                type: array
+                items:
+                  $ref: '#/components/schemas/RecommendationProfile'
+        '401':
+          description: Unauthorized
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ApiResponse'
+                $ref: '#/components/schemas/Error'
+        '409':
+          description: Viewer not eligible (e.g., onboarding incomplete if enforced)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
   /v1/swipes:
     post:
       tags:
         - Recommendation
-      summary: POST v1/swipe
-      operationId: swipes
+      summary: Record a like or pass and create a match on mutual like
+      operationId: postSwipe
       requestBody:
+        required: true
         content:
           application/json:
             schema:
-              type: object
-              properties:
-                userId:
-                  type: string
-                targetUserId:
-                  type: string
-                decision:
-                  type: string
-                  enum: [DISLIKE, LIKE, PASS]
-        required: true
+              $ref: '#/components/schemas/SwipeRequest'
       responses:
-        201:
-          description: Swipe recorded successfully
+        '201':
+          description: Mutual like – match created
           content:
             application/json:
               schema:
-                  $ref: '#/components/schemas/ApiResponse'
-        400:
-          description: 'Invalid payload data'
+                $ref: '#/components/schemas/SwipeResponse'
+        '202':
+          description: Swipe recorded – waiting on mutual like
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ApiResponse'
+                $ref: '#/components/schemas/SwipeResponse'
+        '400':
+          description: Invalid payload
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '403':
+          description: Blocked either way
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          description: Target user not found or not visible
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '409':
+          description: Already matched or conflict with current state
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
 
 components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+
   schemas:
     RecommendationProfile:
       type: object
+      required: [userId, displayName, distanceKm]
       properties:
         userId:
           type: string
+          format: uuid
+        displayName:
+          type: string
+        age:
+          type: integer
+          minimum: 18
+        gender:
+          type: integer
+          description: Gender code (referencing genders.id)
         vibes:
           type: array
           items:
             type: string
-        displayName:
+          description: List of selected vibe tags (labels/emojis)
+        primaryPhotoUrl:
           type: string
-        gender:
-          type: integer
+          format: uri
         previewImages:
           type: array
           items:
             type: string
+            format: uri
         jobTitle:
           type: string
         about:
           type: string
-        distance:
+          maxLength: 1024
+        distanceKm:
           type: number
+          format: float
+        likeBackHint:
+          type: boolean
+          description: True if the candidate has already liked the viewer
 
-    ApiResponse:
+    SwipeRequest:
+      type: object
+      required: [targetUserId, decision]
+      properties:
+        targetUserId:
+          type: string
+          format: uuid
+        decision:
+          $ref: '#/components/schemas/SwipeDecision'
+        explicit:
+          type: boolean
+          default: false
+          description: For PASS only — true = PASS_HARD (pressed X), false = PASS_SOFT (skip/next)
+
+    SwipeDecision:
+      type: string
+      enum: [LIKE, PASS]
+
+    SwipeResponse:
+      type: object
+      required: [status]
+      properties:
+        status:
+          type: string
+          enum: [MATCHED, PENDING]
+        matchId:
+          type: string
+          format: uuid
+          nullable: true
+
+    Error:
       type: object
       properties:
-        statusCode:
-          $ref: '#/components/schemas/ResponseCode'
-        data:
+        code:
+          type: string
+          example: INVALID_REQUEST
+        message:
+          type: string
+          example: Invalid payload
+        details:
           type: object
-    ResponseCode:
-      type: string
-      default: UNKNOWN
-      enum:
-        - USER_REGISTERED
-
+          additionalProperties: true
