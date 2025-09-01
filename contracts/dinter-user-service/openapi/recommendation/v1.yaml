@@ -9,7 +9,7 @@ tags:
     description: Operations related to User object.
 
 paths:
-  /recommendtaions:
+  /v1/recommendtaions:
     get:
       tags:
         - Recommendation
@@ -37,6 +37,39 @@ paths:
                 $ref: '#/components/schemas/RecommendationProfile'
         400:
           description: 'User not found'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResponse'
+  /v1/swipes:
+    post:
+      tags:
+        - Recommendation
+      summary: POST v1/swipe
+      operationId: swipes
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                userId:
+                  type: string
+                targetUserId:
+                  type: string
+                decision:
+                  type: string
+                  enum: [DISLIKE, LIKE, PASS]
+        required: true
+      responses:
+        201:
+          description: Swipe recorded successfully
+          content:
+            application/json:
+              schema:
+                  $ref: '#/components/schemas/ApiResponse'
+        400:
+          description: 'Invalid payload data'
           content:
             application/json:
               schema:

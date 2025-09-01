@@ -22,6 +22,7 @@ open class CustomizePublishingTask  : ContractTask<Contract>() {
                         mp.groupId = "com.dinter.contracts.${contract.type.name.lowercase()}.${contract.context}"
                         mp.artifactId = contract.name
                         mp.version = contractVersion(contract.majorVersion, contractInstance.semver.toString())
+                        println("Publishing contract: ${mp.groupId}:${mp.artifactId}:${mp.version}")
                         mp.artifact(contract.file)
                     }
                 }

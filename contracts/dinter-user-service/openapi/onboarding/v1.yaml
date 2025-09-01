@@ -118,11 +118,12 @@ components:
       properties:
         displayName: { type: string, minLength: 1, maxLength: 50 }
         birthDate: { type: string, format: date }
+        gender: { type: integer }
         about: { type: string, maxLength: 1024 }
         education: { type: string, maxLength: 255 }
         jobTitle: { type: string, maxLength: 255 }
         companyName: { type: string, maxLength: 255 }
-      required: [ displayName, birthDate ]
+      required: [ displayName, birthDate, gender ]
 
     OnboardingPhotosRequest:
       type: object
