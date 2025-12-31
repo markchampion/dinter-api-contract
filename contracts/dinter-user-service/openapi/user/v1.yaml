@@ -35,32 +35,6 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ApiResponse'
-  /v1/users/{id}/profile:
-    get:
-      tags:
-        - User
-      summary: GET v1/users/profile
-      operationId: getUsersProfile
-      parameters:
-        - name: id
-          in: path
-          description: User id to get user status
-          required: true
-          schema:
-            type: string
-      responses:
-        200:
-          description: Users profile found
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/UserProfile'
-        400:
-          description: 'Users profile not found'
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ApiResponse'
   /v1/users/register:
     post:
       tags:
@@ -171,38 +145,6 @@ components:
         - ACTIVE
         - INACTIVE
         - DELETED
-
-    UserProfile:
-      type: object
-      properties:
-        avatarImageUrl:
-          type: string
-        displayName:
-          type: string
-          maxLength: 255
-        birthDate:
-          type: string
-          format: date-time
-        gender:
-          type: boolean
-        expectedGender:
-          type: boolean
-        relationshipGoal:
-          type: string
-          maxLength: 255
-        education:
-          type: string
-          maxLength: 255
-        jobTitle:
-          type: string
-          maxLength: 255
-        companyName:
-          type: string
-          maxLength: 255
-        about:
-          type: string
-          maxLength: 1024
-
     ApiResponse:
       type: object
       properties:

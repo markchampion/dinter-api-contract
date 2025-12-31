@@ -1,0 +1,359 @@
+openapi: 3.0.3
+info:
+  title: Dinter Profile API
+  version: 1.1.0
+  contact:
+    name: API Support
+servers:
+  - url: https://api.dinter.example.com
+    description: Production
+  - url: http://localhost:8080
+    description: Local
+tags:
+  - name: Profile
+    description: Manage the authenticated user's profile
+security:
+  - bearerAuth: []
+
+paths:
+  /v1/profile/me:
+    get:
+      tags: [Profile]
+      summary: Get my profile
+      operationId: getMyProfile
+      responses:
+        '200':
+          description: Current user's profile
+          headers:
+            ETag:
+              description: Strong ETag representing the current profileVersion/content.
+              schema: { type: string, example: W/"profile-42" }
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProfileMe'
+              examples:
+                example:
+                  value:
+                    userId: d479a1fb-a512-4759-89f4-2891131d04b5
+                    displayName: Mark
+                    birthDate: '2000-06-21'
+                    gender: 1
+                    relationshipGoal: "LONG_TERM"
+                    about: 'coffee ☕ + night runs 🏃'
+                    jobTitle: Product Designer
+                    companyName: Acme
+                    education: 'B.Sc. CS, Stanford'
+                    city: Ho Chi Minh City
+                    profileVisibility: PUBLIC
+                    profileVersion: 42
+                    spotifyTrackUrl: https://open.spotify.com/track/1AbCdEfGh
+                    vibes:
+                      - id: 1
+                        label: "🧠 Deep"
+                      - id: 4
+                        label: "🎮 Gamer"
+                    primaryPhotoUrl: https://cdn.example.com/u/me/primary.jpg
+                    gallery:
+                      - imageId: 101
+                        url: https://cdn.example.com/u/me/101.jpg
+                        position: 0
+                      - imageId: 102
+                        url: https://cdn.example.com/u/me/102.jpg
+                        position: 1
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/ApiResponse' }
+
+    patch:
+      tags: [Profile]
+      summary: Update my profile (text, vibes, photos, visibility)
+      description: |
+        Partially update the authenticated user's profile. Any omitted field is left unchanged.
+      operationId: patchMyProfile
+      parameters:
+        - in: header
+          name: If-Match
+          required: false
+          schema: { type: string }
+          description: Strong ETag from GET /v1/profile/me for optimistic concurrency.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PatchProfileMe'
+            examples:
+              updateTextVibesAndReorder:
+                summary: Update text fields, vibes, and reorder existing photos
+                value:
+                  displayName: "Mark Tran"
+                  about: "design, dogs, and longboard 🛹"
+                  jobTitle: "Sr. Product Designer"
+                  companyName: "Acme"
+                  education: "B.Sc. CS, Stanford"
+                  city: "Ho Chi Minh City"
+                  profileVisibility: "PUBLIC"
+                  vibeIds: [1,4,6]
+                  primaryImageId: 102
+                  gallery:
+                    - imageId: 102
+                      position: 0
+                    - imageId: 101
+                      position: 1
+              addNewPhotoByUrl:
+                summary: Add a new photo by URL and make it primary
+                value:
+                  primaryImageUrl: "https://cdn.example.com/u/me/new_primary.jpg"
+                  gallery:
+                    - imageId: 101
+                      position: 1
+                    - imageUrl: "https://cdn.example.com/u/me/new_primary.jpg"
+                      position: 0
+      responses:
+        '200':
+          description: Updated profile
+          headers:
+            ETag:
+              description: New ETag for the updated representation.
+              schema: { type: string, example: W/"profile-43" }
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProfileMe'
+        '400':
+          description: Invalid payload
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/ApiResponse' }
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/ApiResponse' }
+        '409':
+          description: ETag precondition failed (profile changed since your last read)
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/ApiResponse' }
+              examples:
+                preconditionFailed:
+                  value:
+                    code: PRECONDITION_FAILED
+                    message: Profile has changed; refresh and retry with latest ETag.
+        '422':
+          description: Validation error
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/ApiResponse' }
+
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+
+  schemas:
+    ProfileVisibility:
+      type: string
+      enum: [PUBLIC, HIDDEN]
+
+    RelationshipGoal:
+      type: string
+      enum: [UNKNOWN, LONG_TERM, SHORT_TERM, FRIENDS, OPEN_TO_EXPLORING]
+
+    VibeTag:
+      type: object
+      required: [id, label]
+      properties:
+        id:
+          type: integer
+          minimum: 1
+        label:
+          type: string
+          minLength: 1
+          maxLength: 64
+          description: Emoji + short text label
+
+    Photo:
+      type: object
+      required: [imageId, url, position]
+      properties:
+        imageId:
+          type: integer
+          minimum: 1
+        url:
+          type: string
+          format: uri
+        position:
+          type: integer
+          minimum: 0
+          description: Zero-based ordering in gallery
+
+    ProfileMe:
+      type: object
+      required:
+        - userId
+        - displayName
+        - birthDate
+        - profileVisibility
+        - gallery
+        - profileVersion
+      properties:
+        userId:
+          type: string
+          format: uuid
+        displayName:
+          type: string
+          minLength: 1
+          maxLength: 30
+        birthDate:
+          type: string
+          format: date
+          description: ISO date; clients may derive age
+        gender:
+          type: integer
+          description: Gender code (references genders.id)
+        relationshipGoal:
+          $ref: '#/components/schemas/RelationshipGoal'
+        about:
+          type: string
+          maxLength: 500
+          nullable: true
+        jobTitle:
+          type: string
+          maxLength: 100
+          nullable: true
+        companyName:
+          type: string
+          maxLength: 100
+          nullable: true
+        education:
+          type: string
+          maxLength: 120
+          nullable: true
+        city:
+          type: string
+          maxLength: 120
+          nullable: true
+        spotifyTrackUrl:
+          type: string
+          format: uri
+          nullable: true
+        profileVisibility:
+          $ref: '#/components/schemas/ProfileVisibility'
+        profileVersion:
+          type: integer
+          minimum: 0
+          description: Incremented on each successful edit; used for resurfacing and ETags.
+        vibes:
+          type: array
+          description: Selected vibe tags (labels for display)
+          items: { $ref: '#/components/schemas/VibeTag' }
+          maxItems: 6
+        primaryPhotoUrl:
+          type: string
+          format: uri
+          nullable: true
+        gallery:
+          type: array
+          minItems: 0
+          maxItems: 6
+          items: { $ref: '#/components/schemas/Photo' }
+
+    PatchProfileMe:
+      type: object
+      additionalProperties: false
+      properties:
+        displayName:
+          type: string
+          minLength: 1
+          maxLength: 30
+        about:
+          type: string
+          maxLength: 500
+          nullable: true
+        jobTitle:
+          type: string
+          maxLength: 100
+          nullable: true
+        companyName:
+          type: string
+          maxLength: 100
+          nullable: true
+        education:
+          type: string
+          maxLength: 120
+          nullable: true
+        city:
+          type: string
+          maxLength: 120
+          nullable: true
+        profileVisibility:
+          $ref: '#/components/schemas/ProfileVisibility'
+        relationshipGoal:
+          $ref: '#/components/schemas/RelationshipGoal'
+        spotifyTrackUrl:
+          type: string
+          format: uri
+          nullable: true
+        vibeIds:
+          type: array
+          description: Complete set of selected vibe IDs; empty array clears all
+          items:
+            type: integer
+            minimum: 1
+          minItems: 0
+          maxItems: 6
+        primaryImageId:
+          type: integer
+          minimum: 1
+          description: Sets the primary photo by existing imageId
+        primaryImageUrl:
+          type: string
+          format: uri
+          description: Sets the primary photo by URL (must be pre-uploaded)
+        gallery:
+          type: array
+          description: >
+            Authoritative gallery ordering when provided.
+            Items not listed are removed. Each item must specify **either** imageId (existing)
+            **or** imageUrl (new), plus its target position.
+          minItems: 0
+          maxItems: 6
+          items:
+            type: object
+            additionalProperties: false
+            properties:
+              imageId:
+                type: integer
+                minimum: 1
+                description: Reference an existing image
+              imageUrl:
+                type: string
+                format: uri
+                description: Add a new image by URL (already uploaded to cloud)
+              position:
+                type: integer
+                minimum: 0
+            required: [position]
+            oneOf:
+              - required: [imageId, position]
+              - required: [imageUrl, position]
+
+    ApiResponse:
+      type: object
+      properties:
+        statusCode:
+          $ref: '#/components/schemas/ResponseCode'
+        data:
+          type: object
+    ResponseCode:
+      type: string
+      default: UNKNOWN
+      enum:
+        - USER_PROFILE_NOT_FOUND
+        - UNKNOWN

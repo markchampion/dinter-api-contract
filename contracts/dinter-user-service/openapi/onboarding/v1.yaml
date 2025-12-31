@@ -1,5 +1,5 @@
 openapi: 3.0.3
-info: { title: Onboarding API, version: 1.0.0 }
+info: { title: Onboarding API, version: 1.0.1 }
 paths:
   /v1/onboarding/status:
     get:
@@ -129,11 +129,11 @@ components:
       type: object
       additionalProperties: false
       properties:
-        avatarImageId: { type: integer }         # FK to user_images.id
-        galleryImageIds:
+        avatarImageUrl: { type: string }         # FK to user_images.id
+        galleryImageUrls:
           type: array
-          items: { type: integer }
-      required: [ avatarImageId ]
+          items: { type: string }
+      required: [ avatarImageUrl ]
 
     OnboardingVibesRequest:
       type: object
