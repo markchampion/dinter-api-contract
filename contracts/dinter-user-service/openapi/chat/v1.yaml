@@ -1,0 +1,184 @@
+openapi: 3.0.3
+info:
+  title: Dinter Communication API (Stream)
+  version: 1.0.0
+servers:
+  - url: https://api.dinter.example.com
+    description: Production
+  - url: http://localhost:8080
+    description: Local
+tags:
+  - name: Chat
+    description: Stream Chat control-plane endpoints (token + conversation bootstrap)
+security:
+  - bearerAuth: []
+
+paths:
+  /v1/chat/token:
+    post:
+      tags: [Chat]
+      summary: Get Stream chat credentials for the authenticated user
+      operationId: getChatToken
+      responses:
+        "200":
+          description: Stream credentials
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ChatTokenResponse"
+              examples:
+                example:
+                  value:
+                    streamApiKey: "STREAM_PUBLIC_KEY"
+                    streamUserId: "d479a1fb-a512-4759-89f4-2891131d04b5"
+                    streamToken: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
+        "401":
+          description: Unauthorized
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/Error" }
+
+  /v1/chat/conversations/dm:
+    post:
+      tags: [Chat]
+      summary: Get or create a 1:1 DM channel for a matched pair
+      description: >
+        Returns a deterministic Stream channel id for the authenticated user and the target user.
+        The backend verifies that the users are allowed to chat (matched, not blocked, etc.)
+        and ensures the Stream channel exists (idempotent).
+      operationId: getOrCreateDmConversation
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateDmConversationRequest"
+            examples:
+              example:
+                value:
+                  targetUserId: "7a81a6c3-06a7-4b2c-8c28-1b03b9c9b9a1"
+      responses:
+        "200":
+          description: DM conversation reference
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/DmConversationResponse"
+              examples:
+                example:
+                  value:
+                    channelType: "messaging"
+                    channelId: "dm_d479a1fb-a512-4759-89f4-2891131d04b5_7a81a6c3-06a7-4b2c-8c28-1b03b9c9b9a1"
+        "400":
+          description: Invalid payload (e.g., malformed UUID)
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/Error" }
+        "401":
+          description: Unauthorized
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/Error" }
+        "403":
+          description: Not allowed to chat (not matched / blocked / match inactive)
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/Error" }
+              examples:
+                notAllowed:
+                  value:
+                    code: "CHAT_NOT_ALLOWED"
+                    message: "Users are not matched."
+        "409":
+          description: Conflict (optional - if your domain uses conflict semantics)
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/Error" }
+        "422":
+          description: Validation error
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/ValidationError" }
+
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+
+  schemas:
+    ChatTokenResponse:
+      type: object
+      additionalProperties: false
+      required: [streamApiKey, streamUserId, streamToken]
+      properties:
+        streamApiKey:
+          type: string
+          minLength: 1
+          description: Stream public API key (safe to embed in clients)
+          example: "STREAM_PUBLIC_KEY"
+        streamUserId:
+          type: string
+          minLength: 1
+          description: Stream user id (use Dinter userId as string/UUID)
+          example: "d479a1fb-a512-4759-89f4-2891131d04b5"
+        streamToken:
+          type: string
+          minLength: 1
+          description: Stream user token issued by the backend (treat like a session credential)
+
+    CreateDmConversationRequest:
+      type: object
+      additionalProperties: false
+      required: [targetUserId]
+      properties:
+        targetUserId:
+          type: string
+          format: uuid
+          description: The other user in the DM conversation
+
+    DmConversationResponse:
+      type: object
+      additionalProperties: false
+      required: [channelType, channelId]
+      properties:
+        channelType:
+          type: string
+          description: Stream channel type
+          example: "messaging"
+        channelId:
+          type: string
+          minLength: 1
+          description: Deterministic 1:1 channel id, e.g. dm_<minUserId>_<maxUserId>
+
+    Error:
+      type: object
+      properties:
+        code:
+          type: string
+          example: "INVALID_REQUEST"
+        message:
+          type: string
+          example: "Invalid payload"
+        details:
+          type: object
+          additionalProperties: true
+
+    ValidationError:
+      allOf:
+        - $ref: "#/components/schemas/Error"
+        - type: object
+          properties:
+            fieldErrors:
+              type: array
+              items:
+                type: object
+                required: [field, message]
+                properties:
+                  field:
+                    type: string
+                    example: "targetUserId"
+                  message:
+                    type: string
+                    example: "Must be a valid UUID"
