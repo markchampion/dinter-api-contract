@@ -10,7 +10,7 @@ tags:
 
 paths:
   /locations/me:
-    get:
+    put:
       tags:
         - Location
       operationId: updateLocation
@@ -18,61 +18,25 @@ paths:
         content:
           application/json:
             schema:
-              type: object
-              properties:
-                latitude:
-                  type: number
-                  format: double
-                longitude:
-                  type: number
-                  format: double
+              $ref: '#/components/schemas/UserLocation'
         required: true
       responses:
-        201:
+        200:
           description: Location updated successfully
-        400:
-          description: 'Invalid request'
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ApiResponse'
+                $ref: "#/components/schemas/UserLocation"
 
 components:
   schemas:
-    RecommendationProfile:
+    UserLocation:
       type: object
       properties:
-        userId:
-          type: string
-        vibes:
-          type: array
-          items:
-            type: string
-        displayName:
-          type: string
-        gender:
-          type: integer
-        previewImages:
-          type: array
-          items:
-            type: string
-        jobTitle:
-          type: string
-        about:
-          type: string
-        distance:
+        latitude:
           type: number
-
-    ApiResponse:
-      type: object
-      properties:
-        statusCode:
-          $ref: '#/components/schemas/ResponseCode'
-        data:
-          type: object
-    ResponseCode:
-      type: string
-      default: UNKNOWN
-      enum:
-        - INVALID_REQUEST
+          format: double
+        longitude:
+          type: number
+          format: double
 
