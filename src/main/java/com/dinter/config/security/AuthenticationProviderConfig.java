@@ -5,6 +5,7 @@ import com.dinter.config.data.JwtConfig;
 import com.dinter.config.data.OAuth2ClientProperties;
 import lombok.val;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.oauth2.jose.jws.MacAlgorithm;
@@ -37,6 +38,7 @@ public class AuthenticationProviderConfig {
     }
 
     @Bean
+    @ConditionalOnProperty(name = "spring.security.oauth2.client.registration")
     public JwtAuthenticationProvider oauth2JwtAuthenticationProvider() {
         return new JwtAuthenticationProvider(oauth2JwtDecoders().get("google"));
     }
@@ -51,6 +53,7 @@ public class AuthenticationProviderConfig {
     }
 
     @Bean
+    @ConditionalOnProperty(name = "spring.security.oauth2.client.registration")
     public Map<String, JwtDecoder> oauth2JwtDecoders() {
         val jwtDecoders = new HashMap<String, JwtDecoder>();
         resourceServerProperties.getProviders().forEach((key, value) -> {

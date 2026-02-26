@@ -2,6 +2,7 @@ package com.dinter.config.security;
 
 import com.dinter.config.data.OAuth2ClientProperties;
 import lombok.val;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.oauth2.client.AuthorizedClientServiceReactiveOAuth2AuthorizedClientManager;
@@ -19,6 +20,7 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Configuration
+@ConditionalOnProperty(name = "spring.security.oauth2.client.registration")
 public class Oauth2ClientRegistrationConfig {
 
     private final OAuth2ClientProperties properties;
